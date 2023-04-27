@@ -34,7 +34,7 @@ To use frida-ios-dump, follow these steps:
    ldid -S/var/tmp/scp.entitlements -M "$(which scp)"
    rm -v /var/tmp/scp.entitlements
    ```
-   <span><!-- https://discord.com/channels/349243932447604736/1082886572011180053/1092577566008807494 --></span>
+   See also [this tweet](https://twitter.com/opa334dev/status/1650808296545173504?t=cBHJrQLOU-bO0MvIIqj5Aw&s=35).
 7. **Open the target app on the device.**
 8. Connect iDevice to macOS/PC using USB lightning cable.
 9. Run `./dump.py <target>`
