@@ -25,9 +25,7 @@ To use frida-ios-dump, follow these steps:
 4. Run `pip install -r requirements.txt --upgrade` to install the necessary dependencies.
    > **Note**<br/>
    > Upgrade dependencies such as `frida-tools` and `frida` using the command `sudo pip install -r requirements.txt --upgrade`.
-5. Enable SSH forwarding over USB using `iproxy`.
-   For example, run `iproxy -ddd 2222:22`.
-6. On the device, install `curl`, `ldid` and `openssh` from Procursus. 
+5. On the device, install `curl`, `ldid` and `openssh` from Procursus. 
    Then, run the following commands as **root** either over SSH or in a terminal window:
    ```shell
    curl -LO --output-dir /var/tmp/ 'https://raw.githubusercontent.com/miticollo/frida-ios-dump/master/scp.entitlements'
@@ -35,12 +33,12 @@ To use frida-ios-dump, follow these steps:
    rm -v /var/tmp/scp.entitlements
    ```
    See also [this tweet](https://twitter.com/opa334dev/status/1650808296545173504?t=cBHJrQLOU-bO0MvIIqj5Aw&s=35).
-7. **Open the target app on the device.**
-8. Connect iDevice to macOS/PC using USB lightning cable.
-9. Run `./dump.py <target>`
+6. **Open the target app on the device.**
+7. Connect iDevice to macOS/PC using USB lightning cable.
+8. Run `python ./dump.py -H <iDevice_IP> -u mobile -P <mobile_password> <target>`
 
 ```
-./dump.py Spotify 
+python ./dump.py -H 192.168.8.128 -u mobile -P alpine Spotify 
 Start the target app Spotify
 Dumping Spotify to /var/folders/q2/x23bcyr53w3dnmlh2fqjp2mr0000gp/T
 start dump /private/var/containers/Bundle/Application/56AE666E-0F06-4969-91C8-5B63F33ECF58/Spotify.app/Spotify
@@ -64,5 +62,5 @@ To install the app, sideload it as follows:
 
 ## Tested environment
 
-- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Fugu15/releases/tag/1.0.0-beta.8)
+- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.0)
 - [Python3](https://github.com/pyenv/pyenv)
