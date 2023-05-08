@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 
 import argparse
 import codecs
-from email.mime import base
 import os
 import re
 import shutil
