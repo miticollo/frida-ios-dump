@@ -258,29 +258,34 @@ def trim_icon(icon):
     return result
 
 
+PREFIXES = ("/var/containers/Bundle/Application/",
+            "/private/var/containers/Bundle/Application/")
+
+
 def list_processes(device):
     processes = device.enumerate_processes(scope="full")
     for proc in processes:
         params = dict(proc.parameters)
         if "icons" in params:
             params["icons"] = [trim_icon(icon) for icon in params["icons"]]
-        print(
-            f'Process(\n'
-            f'  pid={proc.pid},\n'
-            f'  name="{proc.name}",\n'
-            f'  parameters={{\n'
-            f'    "path": "{params["path"]}",\n'
-            f'    "user": "{params["user"]}",\n'
-            f'    "ppid": {params["ppid"]},\n'
-            f'    "started": {params["started"]}\n'
-            f'  }}\n'
-            f')'
-        )
+        if any(proc.parameters['path'].startswith(prefix) for prefix in PREFIXES) and 'appex' not in proc.parameters['path']:
+            print(
+                f'Process(\n'
+                f'  pid={proc.pid},\n'
+                f'  name="{proc.name}",\n'
+                f'  parameters={{\n'
+                f'    "path": "{params["path"]}",\n'
+                f'    "user": "{params["user"]}",\n'
+                f'    "ppid": {params["ppid"]},\n'
+                f'    "started": {params["started"]}\n'
+                f'  }}\n'
+                f')'
+            )
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='frida-ios-dump (by AloneMonkey v2.1)')
-    parser.add_argument('-l', '--list', dest='list_processes', action='store_true', help='List running processes')
+    parser.add_argument('-l', '--list', dest='list_processes', action='store_true', help='List running apps')
     parser.add_argument('-o', '--output', dest='output_ipa', help='Specify name of the decrypted IPA')
     parser.add_argument('-H', '--host', dest='ssh_host', help='Specify SSH hostname')
     parser.add_argument('-p', '--port', dest='ssh_port', help='Specify SSH port')
