@@ -86,8 +86,8 @@ def generate_ipa(path, display_name):
         if os.path.exists(ipa_filename):
             os.remove(ipa_filename)
         with zipfile.ZipFile(ipa_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            zipdir(path, zipf)    
-        shutil.rmtree(PAYLOAD_PATH)    
+            zipdir(path, zipf)
+        shutil.rmtree(PAYLOAD_PATH)
     except Exception as e:
         print(e)
         finished.set()
@@ -237,13 +237,15 @@ def open_target_app(device, name):
 
     return session, display_name, bundle_identifier
 
+
 # https://stackoverflow.com/a/1855118
 def zipdir(path, ziph):
     for root, dirs, files in os.walk(path):
         for file in files:
-            ziph.write(os.path.join(root, file), 
-                       os.path.relpath(os.path.join(root, file), 
+            ziph.write(os.path.join(root, file),
+                       os.path.relpath(os.path.join(root, file),
                                        os.path.join(path, '..')))
+
 
 def start_dump(session, ipa_name):
     print('Dumping {} to {}'.format(display_name, TEMP_DIR))
@@ -274,7 +276,8 @@ def list_processes(device):
         params = dict(proc.parameters)
         if "icons" in params:
             params["icons"] = [trim_icon(icon) for icon in params["icons"]]
-        if any(proc.parameters['path'].startswith(prefix) for prefix in PREFIXES) and 'appex' not in proc.parameters['path']:
+        if any(proc.parameters['path'].startswith(prefix) for prefix in PREFIXES) and 'appex' not in proc.parameters[
+            'path']:
             print(
                 f'Process(\n'
                 f'  pid={proc.pid},\n'

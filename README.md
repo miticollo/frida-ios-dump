@@ -26,7 +26,7 @@ To use frida-ios-dump, follow these steps:
    > **Note**<br/>
    > Upgrade dependencies such as `frida-tools` and `frida` using the command `sudo pip install -r requirements.txt --upgrade`.
 5. On the device, install `curl`, `ldid` and `openssh` from Procursus. 
-   Then, run the following commands as **root** either over SSH or in a terminal window:
+   Then, run the following commands as **root** (`sudo su`) either over SSH or in a terminal window:
    ```shell
    curl -LO --output-dir /var/tmp/ 'https://raw.githubusercontent.com/miticollo/frida-ios-dump/master/scp.entitlements'
    ldid -S/var/tmp/scp.entitlements -M "$(which scp)"
@@ -62,5 +62,5 @@ To install the app, sideload it as follows:
 
 ## Tested environment
 
-- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.0)
+- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1)
 - [Python3](https://github.com/pyenv/pyenv)
