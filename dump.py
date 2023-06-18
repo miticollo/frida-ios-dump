@@ -13,6 +13,7 @@ import os
 import re
 import shutil
 import subprocess
+import zipfile
 import sys
 import tempfile
 import threading
@@ -75,20 +76,18 @@ def get_usb_iphone():
 def generate_ipa(path, display_name):
     ipa_filename = display_name + '.ipa'
 
-    print('Generating "{}"'.format(ipa_filename))
     try:
         app_name = file_dict['app']
-
         for key, value in file_dict.items():
             from_dir = os.path.join(path, key)
             to_dir = os.path.join(path, app_name, value)
             if key != 'app':
                 shutil.move(from_dir, to_dir)
-
-        target_dir = './' + PAYLOAD_DIR
-        zip_args = ('zip', '-qr', os.path.join(os.getcwd(), ipa_filename), target_dir)
-        subprocess.check_call(zip_args, cwd=TEMP_DIR)
-        shutil.rmtree(PAYLOAD_PATH)
+        if os.path.exists(ipa_filename):
+            os.remove(ipa_filename)
+        with zipfile.ZipFile(ipa_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipdir(path, zipf)    
+        shutil.rmtree(PAYLOAD_PATH)    
     except Exception as e:
         print(e)
         finished.set()
@@ -238,6 +237,13 @@ def open_target_app(device, name):
 
     return session, display_name, bundle_identifier
 
+# https://stackoverflow.com/a/1855118
+def zipdir(path, ziph):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file), 
+                       os.path.relpath(os.path.join(root, file), 
+                                       os.path.join(path, '..')))
 
 def start_dump(session, ipa_name):
     print('Dumping {} to {}'.format(display_name, TEMP_DIR))
