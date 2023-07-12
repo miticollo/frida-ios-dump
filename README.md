@@ -36,6 +36,9 @@ To use frida-ios-dump, follow these steps:
 6. **Open the target app on the device.**
 7. Connect iDevice to macOS/PC using USB lightning cable.
 8. Run `python ./dump.py -H <iDevice_IP> -u mobile -P <mobile_password> <target>`
+   > **Warning**<br/>
+   > If the script fails with an error related to `SCP`. 
+   > Try again at least three times!
 
 ```
 python ./dump.py -H 192.168.8.128 -u mobile -P alpine Spotify 
@@ -62,5 +65,5 @@ To install the app, sideload it as follows:
 
 ## Tested environment
 
-- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1)
+- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1.2)
 - [Python3](https://github.com/pyenv/pyenv)
