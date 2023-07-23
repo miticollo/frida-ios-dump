@@ -65,5 +65,10 @@ To install the app, sideload it as follows:
 
 ## Tested environment
 
-- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1.2)
 - [Python3](https://github.com/pyenv/pyenv)
+
+### Tested Devices and iOS Versions
+
+- iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1.2)
+- iPad Pro 10,5" with iPadOS 17b3 (build 21A5277j) jailbroken using [palera1n](https://cdn.nickchan.lol/palera1n/artifacts/c-rewrite/openra1n/236/)
+
