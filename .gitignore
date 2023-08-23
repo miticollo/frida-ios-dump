@@ -476,3 +476,4 @@ pip-selfcheck.json
 # End of https://www.toptal.com/developers/gitignore/api/python,virtualenv,pycharm+all,git,macos,linux,node
 
 !agent/**/lib/
+*.ipa
