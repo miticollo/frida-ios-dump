@@ -81,14 +81,13 @@ function dumpModule(module: Module): void {
                 const plainBuffer: ArrayBuffer = module.base.add(command.cryptoff).readByteArray(command.cryptsize)!;
                 patchedModule.base.add(command.cryptoff).writeByteArray(plainBuffer);
 
-                console.log(` - Sending module to PC/macOS...`);
+                console.log(" - Sending module to PC/macOS... ");
 
                 send({
                     type: "file",
+                    mode: "executable",
                     path: module.path.replace(payloadPath, "").substring(1),
                 }, patchedModule.module.buffer as ArrayBuffer);
-
-                console.log(`DONE!`);
             }
     });
 }

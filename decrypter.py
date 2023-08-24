@@ -1,7 +1,9 @@
 import os
 import shutil
+import stat
 import tempfile
 import threading
+import time
 from pathlib import Path
 from typing import Any, Mapping, Optional
 
@@ -9,6 +11,9 @@ import frida
 from frida_tools.application import ConsoleApplication
 
 AGENT_ROOT_PATH: str = str(Path(__file__).parent / 'agent')
+
+# Start timer
+start_time = time.time()
 
 
 def main() -> None:
@@ -54,6 +59,11 @@ class DecrypterApplication(ConsoleApplication):
 
                 self._event.wait()
                 shutil.rmtree(self._tmpdir)
+
+                # End timer
+                end_time = time.time()
+                self._update_status(f'\n\nCompleted in {(end_time - start_time):.2f}s')
+
                 self._exit(0)
             except Exception as e:
                 self.on_decrypt_stopped(str(e))
@@ -78,8 +88,16 @@ class DecrypterApplication(ConsoleApplication):
             if mtype == "file":
                 with open(Path(self._payload) / payload["path"], "wb") as binary_file:
                     binary_file.write(data)
+                if "mode" in payload and payload["mode"] == "executable":
+                    os.chmod(Path(self._payload) / payload["path"],
+                             stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+                else:
+                    os.chmod(Path(self._payload) / payload["path"],
+                             stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
             elif mtype == "directory":
                 os.makedirs(Path(self._payload) / payload["path"])
+                os.chmod(Path(self._payload) / payload["path"],
+                         stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
             elif mtype == "info":
                 output_path = (Path(os.getcwd()) / f'{payload["bundleId"]}_{payload["version"]}').name
                 shutil.make_archive(output_path, 'zip', self._tmpdir, verbose=True)
