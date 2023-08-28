@@ -11,7 +11,7 @@ import { NSBundle } from "./lib/types.js";
 const ObjCAvailable: boolean = (Process.platform === 'darwin') && !(Java && Java.available) && ObjC && ObjC.available && ObjC.classes && typeof ObjC.classes.NSString !== 'undefined';
 if (!ObjCAvailable) throw new Error('This tool requires the objc runtime');
 
-const payloadPath: string = appPath.UTF8String().substring(0, appPath.UTF8String().lastIndexOf('/'));
+const payloadPath: string = appPath.UTF8String().match(/^\/private\/var\/containers\/Bundle\/Application\/[A-F0-9-]+/)[0];
 
 function loadDynamicLibraries(path: ObjC.Object): void {
     const files = manager.contentsOfDirectoryAtPath_error_(path, NULL);
@@ -26,23 +26,24 @@ function loadDynamicLibraries(path: ObjC.Object): void {
 
         if (! isDir.readPointer().isNull()) {
             if (file.UTF8String() !== '_CodeSignature' && file.UTF8String() !== 'SC_Info') {
+                if (file.toString().endsWith(".framework")
+                    || file.toString().endsWith(".bundle")
+                    || file.toString().endsWith(".xctest")) {
+                    const errorPtr: NativePointer = Memory.alloc(Process.pointerSize);
+                    errorPtr.writePointer(NULL);
+                    if (!loadBundle(fullPath, errorPtr)) {
+                        const error: ObjC.Object = new ObjC.Object(errorPtr.readPointer());
+                        throw new Error(`${error.userInfo().objectForKey_("NSLocalizedDescription")}`);
+                    }
+                }
                 send({
-                        type: "directory",
-                        path: remotePath,
-                    });
+                    type: "directory",
+                    path: remotePath,
+                });
                 loadDynamicLibraries(fullPath);
             }
         } else {
-            if (file.toString().endsWith(".framework")
-                || file.toString().endsWith(".bundle")
-                || file.toString().endsWith(".xctest")) {
-                const errorPtr: NativePointer = Memory.alloc(Process.pointerSize);
-                errorPtr.writePointer(NULL);
-                if (!loadBundle(fullPath, errorPtr)) {
-                    const error: ObjC.Object = new ObjC.Object(errorPtr.readPointer());
-                    throw new Error(`${error.userInfo().objectForKey_("NSLocalizedDescription")}`);
-                }
-            } else if (file.toString().endsWith(".dylib")) {
+            if (file.toString().endsWith(".dylib")) {
                 const modules: Module[] = Process.enumerateModules().filter((m: Module): boolean => m.path.indexOf(fullPath.UTF8String()) !== -1);
                 if (modules.length === -1)
                     if (dlopen(fullPath.toString(), RTLD_GLOBAL | RTLD_LAZY).isNull())
@@ -93,19 +94,17 @@ function dumpModule(module: Module): void {
 }
 
 send({
+    type: "info",
+    bundleId: NSBundle.mainBundle().bundleIdentifier().toString(),
+    version: NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleShortVersionString").toString(),
+});
+
+send({
     type: "directory",
-    path: appPath.UTF8String().match(/([^\/]*)\/*$/)[1],
+    path: appPath.UTF8String().replace(payloadPath, "").substring(1),
 });
 
 loadDynamicLibraries(appPath);
 Process.enumerateModules()
     .filter((x: Module) => x.path.startsWith(appPath.UTF8String()))
     .forEach((module: Module): void => dumpModule(module));
-
-// TODO: dump Plugins?
-
-send({
-    type: "info",
-    bundleId: NSBundle.mainBundle().bundleIdentifier().toString(),
-    version: NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleShortVersionString").toString(),
-});

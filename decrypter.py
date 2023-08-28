@@ -2,7 +2,6 @@ import os
 import shutil
 import stat
 import tempfile
-import threading
 import time
 from pathlib import Path
 from typing import Any, Mapping, Optional
@@ -27,7 +26,8 @@ class DecrypterApplication(ConsoleApplication):
         self._errors = 0
         self._tmpdir = tempfile.mkdtemp()
         self._payload = Path(self._tmpdir) / "Payload"
-        self._event: threading.Event = threading.Event()
+        self._bundle_id = None
+        self._version = None
 
         super().__init__()
 
@@ -51,13 +51,17 @@ class DecrypterApplication(ConsoleApplication):
                 script.on("message", self._process_message)
                 self._on_script_created(script)
 
-                os.makedirs(self._payload)
-
                 self._resume()
+
+                os.makedirs(self._payload)
 
                 script.load()
 
-                self._event.wait()
+                output_path = (Path(os.getcwd()) / f'{self._bundle_id}_{self._version}').name
+                shutil.make_archive(output_path, 'zip', self._tmpdir, verbose=True)
+                # Rename the .zip file to .ipa
+                os.rename(output_path + ".zip", output_path + ".ipa")
+
                 shutil.rmtree(self._tmpdir)
 
                 # End timer
@@ -99,11 +103,8 @@ class DecrypterApplication(ConsoleApplication):
                 os.chmod(Path(self._payload) / payload["path"],
                          stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
             elif mtype == "info":
-                output_path = (Path(os.getcwd()) / f'{payload["bundleId"]}_{payload["version"]}').name
-                shutil.make_archive(output_path, 'zip', self._tmpdir, verbose=True)
-                # Rename the .zip file to .ipa
-                os.rename(output_path + ".zip", output_path + ".ipa")
-                self._event.set()
+                self._version = payload["version"]
+                self._bundle_id = payload["bundleId"]
             else:
                 self._print("message:", message, "data:", data)
 

@@ -22,12 +22,12 @@ export class MachO {
         this.parseLoadCommands();
     }
 
-    public is64bit(): boolean {
+    public is64(): boolean {
         return this.header.magic === MH_MAGIC_64;
     }
 
-    private parseLoadCommands() {
-        const headerSize: number = this.is64bit() ? MH_HEADER_SIZE_64 : MH_HEADER_SIZE;
+    private parseLoadCommands(): void {
+        const headerSize: number = this.is64() ? MH_HEADER_SIZE_64 : MH_HEADER_SIZE;
         const end: number = headerSize + this.header.sizeofcmds;
         for (let offset = headerSize; offset < end;) {
             const command: LoadCommand = LoadCommandFactory.retrieveCommand(this.module, offset, this.base);
