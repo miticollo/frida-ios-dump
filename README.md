@@ -14,7 +14,7 @@ To use frida-ios-dump, follow these steps:
 2. <span id="clone"></span>
    Clone this project by typing the following command in your terminal window:
    ```shell
-   git clone --depth=1 -j8 https://github.com/miticollo/frida-ios-dump.git
+   git clone --depth=1 -b legacy -j8 https://github.com/miticollo/frida-ios-dump.git
    cd frida-ios-dump/
    ```
 3. Create a virtual environment.
