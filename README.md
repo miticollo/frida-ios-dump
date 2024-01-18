@@ -15,10 +15,10 @@ Furthermore, this solution extends the [`ConsoleApplication`](https://github.com
 
 To use frida-ios-dump, follow these steps:
 
-1. Install [frida](http://www.frida.re/) on your device:
-   - Add [my repo](https://miticollo.github.io/repos/#my).
-   - Compile it yourself.
-     For more information, refer to the dedicated [gist](https://gist.github.com/miticollo/6e65b59d83b17bacc00523a0f9d41c11).
+1. Install [frida](http://www.frida.re/) on your device.
+   > **Note**<br/>
+   > [My repo](https://miticollo.github.io/repos/) is no more necessary because since Frida 16.1.5 supports rootless and rootfull JB.
+   > Anyway if you want to compile your own Frida DEB you can follow/adapt [my guide](https://gist.github.com/miticollo/6e65b59d83b17bacc00523a0f9d41c11).
 2. <span id="clone"></span>
    Clone this project by entering the following command in your terminal:
    ```shell
