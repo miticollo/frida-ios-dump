@@ -30,10 +30,12 @@ To use frida-ios-dump, follow these steps:
    python -m venv ./.venv
    source ./.venv/bin/activate
    ```
-4. Run `pip -vvv install frida-tools --upgrade` to install/upgrade the Frida dependency.
-5. (Optional) Connect your iDevice to macOS/PC using a USB lightning cable.
+4. Run `pip -vvv install frida-tools --upgrade` to install the Frida dependency.
+   > **Note**<br/>
+   > To upgrade dependencies run `pip install --upgrade --upgrade-strategy 'eager'`.
+6. (Optional) Connect your iDevice to macOS/PC using a USB lightning cable.
    You can also decrypt iOS over Wireless using the remote communication provided by Frida, although USB is recommended.
-6. Run the following commands to decrypt apps:
+7. Run the following commands to decrypt apps:
    - ```shell
      python ./decrypter.py -U -f com.google.ios.youtube
      ```
@@ -60,6 +62,11 @@ To install the app, sideload it as follows:
 
 - iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1.5)
 - iPhone X with iOS 16.3.1 rootfull JB
+- [iPhone 8 with iOS 15.6 jailbroken using palera1n](https://twitter.com/mahochan1102/status/1749986132191002863?s=61&t=cJTiT29OrKBPSrNp_jldBw)
+
+## TODO
+
+- [ ] Support plugins decription
 
 ## References
 
