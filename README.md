@@ -5,12 +5,9 @@ A tool to extract a decrypted IPA from a jailbroken, **rootless** device.
 
 To use frida-ios-dump, follow these steps:
 1. Install [frida](http://www.frida.re/) on your device.
-   You have two options:
-   - Add [my repo](https://miticollo.github.io/repos/#my).
-     > **Note**<br/>
-     > It should work on **all rootless JB**.
-   - Compile it yourself.
-     For more information, refer to the dedicated [gist](https://gist.github.com/miticollo/6e65b59d83b17bacc00523a0f9d41c11).
+   > **Note**<br/>
+   > [My repo](https://miticollo.github.io/repos/) is no more necessary because since Frida 16.1.5 supports rootless and rootfull JB.
+   > Anyway if you want to compile your own Frida DEB you can follow/adapt [my guide](https://gist.github.com/miticollo/6e65b59d83b17bacc00523a0f9d41c11).
 2. <span id="clone"></span>
    Clone this project by typing the following command in your terminal window:
    ```shell
@@ -24,7 +21,7 @@ To use frida-ios-dump, follow these steps:
    ```
 4. Run `pip install -r requirements.txt --upgrade` to install the necessary dependencies.
    > **Note**<br/>
-   > Upgrade dependencies such as `frida-tools` and `frida` using the command `sudo pip install -r requirements.txt --upgrade`.
+   > Upgrade dependencies such as `frida-tools` and `frida` using the command `pip install --upgrade -r ./requirements.txt --upgrade-strategy 'eager'`.
 5. On the device, install `curl`, `ldid` and `openssh` from Procursus. 
    Then, run the following commands as **root** (`sudo su`) either over SSH or in a terminal window:
    ```shell
