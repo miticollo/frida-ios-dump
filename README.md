@@ -3,7 +3,7 @@ A tool for extracting decrypted IPA files from jailbroken devices.
 
 ## What's New?
 This fork **no longer requires** using `scp`, unlike the original project. 
-This is possible because I utilized the Frida [File API](https://frida.re/news/2022/07/06/frida-15-1-28-released/#:~:text=File%20API) to read all bytes inside a `Module` file and then parse it into a `MachO` object. 
+This is possible because I used the Frida [File API](https://frida.re/news/2022/07/06/frida-15-1-28-released/#:~:text=File%20API) to read all bytes inside a `Module` file and then parse it into a `MachO` object. 
 Currently, this class does not implement all [Apple specifications](https://github.com/apple-oss-distributions/xnu/blob/main/EXTERNAL_HEADERS/mach-o/loader.h).
 
 By doing this, the tool doesn't generate auxiliary files on the APFS filesystem, as they are only stored as `ArrayBuffer` (and [`node:Buffer`](https://nodejs.org/api/buffer.html)) in memory. 
@@ -27,15 +27,15 @@ To use frida-ios-dump, follow these steps:
    ```
 3. Create a virtual environment.
    ```shell
-   python -m venv ./.venv
+   python -m venv --upgrade-deps ./.venv
    source ./.venv/bin/activate
    ```
-4. Run `pip -vvv install frida-tools --upgrade` to install the Frida dependency.
+4. Run `pip -vvv install frida-tools --require-virtualenv --upgrade --upgrade-strategy 'eager'` to install the Frida dependency.
    > **Note**<br/>
-   > To upgrade dependencies run `pip install --upgrade --upgrade-strategy 'eager'`.
-6. (Optional) Connect your iDevice to macOS/PC using a USB lightning cable.
+   > This command will also upgrade dependencies.
+5. (Optional) Connect your iDevice to macOS/PC using a USB lightning cable.
    You can also decrypt iOS over Wireless using the remote communication provided by Frida, although USB is recommended.
-7. Run the following commands to decrypt apps:
+6. Run the following commands to decrypt apps:
    - ```shell
      python ./decrypter.py -U -f com.google.ios.youtube
      ```
@@ -63,10 +63,6 @@ To install the app, sideload it as follows:
 - iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1.5)
 - iPhone X with iOS 16.3.1 rootfull JB
 - [iPhone 8 with iOS 15.6 jailbroken using palera1n](https://twitter.com/mahochan1102/status/1749986132191002863?s=61&t=cJTiT29OrKBPSrNp_jldBw)
-
-## TODO
-
-- [ ] Support plugins decription
 
 ## References
 
