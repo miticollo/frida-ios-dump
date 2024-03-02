@@ -1,5 +1,5 @@
-import { LC_ENCRYPTION_INFO, LC_ENCRYPTION_INFO_64, LoadCommand } from "./command.js";
-import { EncryptionInfo, EncryptionInfo64 } from "./encryption_info.js";
+import { LC_ENCRYPTION_INFO, LC_ENCRYPTION_INFO_64, LoadCommand } from './command.js';
+import { EncryptionInfo, EncryptionInfo64 } from './encryption_info.js';
 
 export class LoadCommandFactory {
     private constructor() {

@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "description": "Agent used by frida-ios-dump",
   "private": true,
-  "main": "index.ts",
+  "exports": "./index.js",
   "type": "module",
-  "scripts": {
-    "build": "frida-compile index.ts -o _agent.js -c",
-    "watch": "frida-compile index.ts -o _agent.js -w"
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "@types/frida-gum": "^18.3.1",
     "@types/node": "^18.14.0",
-    "frida-compile": "^16.1.8"
+    "frida-compile": "^16.1.8",
+    "frida-remote-stream": "^6.0.2"
   }
 }

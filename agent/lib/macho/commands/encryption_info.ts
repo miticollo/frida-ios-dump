@@ -1,4 +1,4 @@
-import { LoadCommand } from "./command.js";
+import { LoadCommand } from './command.js';
 
 /*
  * The encryption_info_command contains the file offset and size of an

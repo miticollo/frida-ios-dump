@@ -1,30 +1,31 @@
-import { dlopen, RTLD_GLOBAL, RTLD_LAZY } from "./lib/dlopen.js";
-import { loadBundle } from "./lib/bundle.js";
-import { appPath, manager } from "./lib/shared.js";
-import { MachO } from "./lib/macho/macho.js";
-import { LoadCommand } from "./lib/macho/commands/command.js";
-import { EncryptionInfo, EncryptionInfo64 } from "./lib/macho/commands/encryption_info.js";
-import assert from "node:assert";
-import { NSBundle } from "./lib/types.js";
+import { dlopen, RTLD_GLOBAL, RTLD_LAZY } from './lib/dlopen.js';
+import { loadBundle } from './lib/bundle.js';
+import { appPath, manager } from './lib/shared.js';
+import { MachO } from './lib/macho/macho.js';
+import { EncryptionInfo, EncryptionInfo64 } from './lib/macho/commands/encryption_info.js';
+import assert from 'node:assert';
+import { NSBundle } from './lib/types.js';
+import { Agent } from './lib/pull.js';
 
 /* ObjC.available is buggy on non-objc apps, so override this */
-const ObjCAvailable: boolean = (Process.platform === 'darwin') && !(Java && Java.available) && ObjC && ObjC.available && ObjC.classes && typeof ObjC.classes.NSString !== 'undefined';
+const ObjCAvailable: boolean = (Process.platform === 'darwin') && !(Java && Java.available) && ObjC && ObjC.available && ObjC.classes && typeof ObjC.classes['NSString'] !== 'undefined';
 if (!ObjCAvailable) throw new Error('This tool requires the objc runtime');
 
-const payloadPath: string = appPath.UTF8String().match(/^\/private\/var\/containers\/Bundle\/Application\/[A-F0-9-]+/)[0];
+const payloadPath: string = appPath['UTF8String']().match(/^\/private\/var\/containers\/Bundle\/Application\/[A-F0-9-]+/)[0];
+const agent = new Agent();
 
-function loadDynamicLibraries(path: ObjC.Object): void {
-    const files = manager.contentsOfDirectoryAtPath_error_(path, NULL);
+async function loadDynamicLibraries(path: ObjC.Object): Promise<void> {
+    const files = manager['contentsOfDirectoryAtPath_error_'](path, NULL);
     const count = files.count().valueOf();
     for (let i = 0; i !== count; i++) {
         const file = files.objectAtIndex_(i);
-        const fullPath = path.stringByAppendingPathComponent_(file);
+        const fullPath = path['stringByAppendingPathComponent_'](file);
         const remotePath: string = fullPath.UTF8String().replace(payloadPath, "").substring(1);
 
         const isDir: NativePointer = Memory.alloc(Process.pointerSize);
-        manager.fileExistsAtPath_isDirectory_(fullPath, isDir);
+        manager['fileExistsAtPath_isDirectory_'](fullPath, isDir);
 
-        if (! isDir.readPointer().isNull()) {
+        if (!isDir.readPointer().isNull()) {
             if (file.UTF8String() !== '_CodeSignature' && file.UTF8String() !== 'SC_Info') {
                 if (file.toString().endsWith(".framework")
                     || file.toString().endsWith(".bundle")
@@ -33,14 +34,14 @@ function loadDynamicLibraries(path: ObjC.Object): void {
                     errorPtr.writePointer(NULL);
                     if (!loadBundle(fullPath, errorPtr)) {
                         const error: ObjC.Object = new ObjC.Object(errorPtr.readPointer());
-                        throw new Error(`${error.userInfo().objectForKey_("NSLocalizedDescription")}`);
+                        throw new Error(`${error['userInfo']().objectForKey_("NSLocalizedDescription")}`);
                     }
                 }
                 send({
                     type: "directory",
                     path: remotePath,
                 });
-                loadDynamicLibraries(fullPath);
+                await loadDynamicLibraries(fullPath);
             }
         } else {
             if (file.toString().endsWith(".dylib")) {
@@ -49,21 +50,18 @@ function loadDynamicLibraries(path: ObjC.Object): void {
                     if (dlopen(fullPath.toString(), RTLD_GLOBAL | RTLD_LAZY).isNull())
                         throw new Error(`${file.toString()} @ ${path.toString()} is not loaded`);
             }
-            send({
-                type: "file",
-                path: remotePath,
-            }, File.readAllBytes(fullPath.UTF8String()));
+            await agent.pull_file(fullPath.UTF8String(), remotePath, "executable"); // TODO: check permissions
         }
     }
 }
 
-function dumpModule(module: Module): void {
+async function dumpModule(module: Module): Promise<void> {
     const candidates: Module[] = Process.enumerateModules().filter((x: Module): boolean => x.name === module.name);
     if (candidates.length !== 1) throw new Error(`Cannot find Mach-O: ${module.path}`);
 
     const patchedModule: MachO = new MachO(File.readAllBytes(module.path));
 
-    patchedModule.loadCommands.forEach((command: LoadCommand): void => {
+    for (const command of patchedModule.loadCommands) {
         if (command instanceof EncryptionInfo64 || command instanceof EncryptionInfo)
             if ((command as EncryptionInfo).isEncrypted()) {
 
@@ -84,27 +82,28 @@ function dumpModule(module: Module): void {
 
                 console.log(" - Sending module to PC/macOS... ");
 
-                send({
-                    type: "file",
-                    mode: "executable",
-                    path: module.path.replace(payloadPath, "").substring(1),
-                }, patchedModule.module.buffer as ArrayBuffer);
+                await agent.pull_buffer(patchedModule.module, module.path.replace(payloadPath, "").substring(1), "executable");
             }
-    });
+    }
+}
+
+async function wrap(): Promise<void> {
+    await loadDynamicLibraries(appPath);
+    for (const module of Process.enumerateModules().filter((x: Module) => x.path.startsWith(appPath['UTF8String']())))
+        await dumpModule(module);
 }
 
 send({
     type: "info",
-    bundleId: NSBundle.mainBundle().bundleIdentifier().toString(),
-    version: NSBundle.mainBundle().infoDictionary().objectForKey_("CFBundleShortVersionString").toString(),
+    bundleId: NSBundle['mainBundle']().bundleIdentifier().toString(),
+    version: NSBundle['mainBundle']().infoDictionary().objectForKey_("CFBundleShortVersionString").toString(),
 });
 
 send({
     type: "directory",
-    path: appPath.UTF8String().replace(payloadPath, "").substring(1),
+    path: appPath['UTF8String']().replace(payloadPath, "").substring(1),
 });
 
-loadDynamicLibraries(appPath);
-Process.enumerateModules()
-    .filter((x: Module) => x.path.startsWith(appPath.UTF8String()))
-    .forEach((module: Module): void => dumpModule(module));
+rpc.exports = {
+    dump: () => wrap(),
+};

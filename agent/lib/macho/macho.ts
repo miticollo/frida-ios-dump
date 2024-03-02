@@ -6,8 +6,8 @@ import {
     MH_HEADER_SIZE_64,
     MH_MAGIC_64
 } from "./header.js";
-import { LoadCommand } from "./commands/command.js";
-import { LoadCommandFactory } from "./commands/factory.js";
+import { LoadCommand } from './commands/command.js';
+import { LoadCommandFactory } from './commands/factory.js';
 
 export class MachO {
     public readonly header: MachOHeader;
