@@ -90,7 +90,7 @@ class DecrypterApplication(ConsoleApplication):
                 # Rename the .zip file to .ipa
                 os.rename(output_path + ".zip", output_path + ".ipa")
 
-                self._update_status(f"IPA saved @ ./{output_path}.ipa")
+                self._update_status(f"Saved to ./{output_path}.ipa")
 
                 shutil.rmtree(self._tmpdir)
 
