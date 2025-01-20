@@ -35,7 +35,7 @@ To use frida-ios-dump, follow these steps:
    > This command will also upgrade dependencies.
 5. (Optional) Connect your iDevice to macOS/PC using a USB lightning cable.
    You can also decrypt iOS over Wireless using the remote communication provided by Frida, although USB is recommended.
-6. Run the following command to install script dependencies:
+6. Run the following command to install agent dependencies:
    ```shell
    npm -ddd install
    ```
