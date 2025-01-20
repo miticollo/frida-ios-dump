@@ -3,9 +3,7 @@
     "module": "node16",
     "moduleResolution": "node16",
     "target": "ES2022", // Node.js 18
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2020"],
     "resolveJsonModule": false, // ESM doesn't yet support JSON modules.
     "allowJs": true,
     "checkJs": true,
@@ -19,7 +17,7 @@
     //"noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     //"noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": true,
+    //"noPropertyAccessFromIndexSignature": true,
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true
   }

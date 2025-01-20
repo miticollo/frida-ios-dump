@@ -18,11 +18,11 @@ To use frida-ios-dump, follow these steps:
 1. Install [frida](http://www.frida.re/) on your device.
    > **Note**<br/>
    > [My repo](https://miticollo.github.io/repos/) is no more necessary because since Frida 16.1.5 supports rootless and rootfull JB.
-   > Anyway if you want to compile your own Frida DEB you can follow/adapt [my guide](https://gist.github.com/miticollo/6e65b59d83b17bacc00523a0f9d41c11).
+   > Anyway if you want to compile your own Frida DEB you can run [my script](https://gist.github.com/miticollo/12e3fff5ba8fab7dd707c874105a508f#file-build_frida-sh).
 2. <span id="clone"></span>
    Clone this project by entering the following command in your terminal:
    ```shell
-   git clone --depth=1 -j8 https://github.com/miticollo/frida-ios-dump.git
+   git clone --depth=1 https://github.com/miticollo/frida-ios-dump.git
    cd frida-ios-dump/
    ```
 3. Create a virtual environment.
@@ -35,7 +35,11 @@ To use frida-ios-dump, follow these steps:
    > This command will also upgrade dependencies.
 5. (Optional) Connect your iDevice to macOS/PC using a USB lightning cable.
    You can also decrypt iOS over Wireless using the remote communication provided by Frida, although USB is recommended.
-6. Run the following commands to decrypt apps:
+6. Run the following command to install script dependencies:
+   ```shell
+   npm -ddd install
+   ```
+7. Run the following commands to decrypt apps:
    - ```shell
      python ./decrypter.py -U -f com.google.ios.youtube
      ```
@@ -63,6 +67,7 @@ To install the app, sideload it as follows:
 - iPhone XR with iOS 15.1b1 jailbroken using [Dopamine](https://github.com/opa334/Dopamine/releases/tag/1.1.5)
 - iPhone X with iOS 16.3.1 rootfull JB
 - [iPhone 8 with iOS 15.6 jailbroken using palera1n](https://twitter.com/mahochan1102/status/1749986132191002863?s=61&t=cJTiT29OrKBPSrNp_jldBw)
+- iPhone XR with iOS 15.1b1 jailbroken using RootHide
 
 ## References
 
