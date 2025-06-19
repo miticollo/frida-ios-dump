@@ -6,6 +6,8 @@ import { LoadCommand } from "./lib/macho/commands/command.js";
 import { EncryptionInfo, EncryptionInfo64 } from "./lib/macho/commands/encryption_info.js";
 import assert from "node:assert";
 import { NSBundle } from "./lib/types.js";
+import ObjC from 'frida-objc-bridge';
+import Java from 'frida-java-bridge';
 
 /* ObjC.available is buggy on non-objc apps, so override this */
 const ObjCAvailable: boolean = (Process.platform === 'darwin') && !(Java && Java.available) && ObjC && ObjC.available && ObjC.classes && typeof ObjC.classes.NSString !== 'undefined';
