@@ -1,3 +1,4 @@
+import ObjC from "frida-objc-bridge";
 import { NSBundle, NSDictionary } from './types.js';
 import { manager } from './shared.js';
 

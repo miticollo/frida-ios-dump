@@ -8,10 +8,18 @@
   "engines": {
     "node": ">=18"
   },
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "frida-compile index.ts -o ../_agent.js -c",
+    "watch": "frida-compile index.ts -o ../_agent.js -w"
+  },
   "devDependencies": {
-    "@types/frida-gum": "^18.4.0",
-    "@types/node": "22.7.3",
-    "frida-compile": "^16.3.0",
-    "frida-remote-stream": "^6.0.2"
+    "@types/frida-gum": "^19.0.0",
+    "@types/node": "22.7.3"
+  },
+  "dependencies": {
+    "frida-objc-bridge": "^8.0.5",
+    "frida-remote-stream": "^6.0.3",
+    "version-compare": "^3.12.0"
   }
 }
