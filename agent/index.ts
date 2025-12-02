@@ -1,3 +1,7 @@
+import versionCompare, { VersionIs } from 'version-compare';
+if (versionCompare(Frida.version, '17.0.0') === VersionIs.LessThan)
+    throw new Error(`Frida version ${Frida.version} is not supported. Please install Frida >= 17.0.0`);
+import ObjC from "frida-objc-bridge";
 import { dlopen, RTLD_GLOBAL, RTLD_LAZY } from './lib/dlopen.js';
 import { loadBundle } from './lib/bundle.js';
 import { appPath, manager } from './lib/shared.js';
@@ -8,7 +12,7 @@ import { NSBundle } from './lib/types.js';
 import { Agent } from './lib/pull.js';
 
 /* ObjC.available is buggy on non-objc apps, so override this */
-const ObjCAvailable: boolean = (Process.platform === 'darwin') && !(Java && Java.available) && ObjC && ObjC.available && ObjC.classes && typeof ObjC.classes['NSString'] !== 'undefined';
+const ObjCAvailable: boolean = (Process.platform === 'darwin') && ObjC && ObjC.available && ObjC.classes && typeof ObjC.classes['NSString'] !== 'undefined';
 if (!ObjCAvailable) throw new Error('This tool requires the objc runtime');
 
 const payloadPath: string = appPath['UTF8String']().match(/^\/private\/var\/containers\/Bundle\/Application\/[A-F0-9-]+/)[0];
