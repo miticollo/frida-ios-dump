@@ -1,5 +1,6 @@
 import { NSBundle, NSDictionary } from './types.js';
 import { manager } from './shared.js';
+import ObjC from "frida-objc-bridge";
 
 function infoDictionaryForPath(path: ObjC.Object): ObjC.Object | null {
     const infoPlistPath = path['stringByAppendingPathComponent_']("Info.plist");
